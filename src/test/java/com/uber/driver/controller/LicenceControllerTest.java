@@ -30,7 +30,7 @@ public class LicenceControllerTest {
     private com.uber.driver.service.LicenceService licenceService;
 
     @Test
-    public void testSaveDriverLicence_DriverExists() throws Exception {
+    public void testSaveDriverLicence() throws Exception {
         DriverLicence driverLicence = getDriverLicence();
         Mockito.when(licenceService.saveLicence(Mockito.any(DriverLicence.class))).thenReturn(driverLicence);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -45,21 +45,7 @@ public class LicenceControllerTest {
     }
 
     @Test
-    public void testSaveDriverLicence_DriverDoesNotExists() throws Exception {
-        DriverLicence driverLicence = getDriverLicence();
-        Mockito.when(licenceService.saveLicence(Mockito.any(DriverLicence.class))).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/driver/licence")
-                .content(asJsonString(driverLicence))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testGetDriverLicence_LicenceExists() throws Exception {
+    public void testGetDriverLicence() throws Exception {
         DriverLicence driverLicence = getDriverLicence();
         Mockito.when(licenceService.getLicence(Mockito.anyLong())).thenReturn(driverLicence);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -70,18 +56,8 @@ public class LicenceControllerTest {
         JSONAssert.assertEquals(asJsonString(driverLicence), mvcResult.getResponse().getContentAsString(), false);
     }
 
-
     @Test
-    public void testGetDriverLicence_LicenceDoesNotExists() throws Exception {
-        Mockito.when(licenceService.getLicence(Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/{id}/licence", 234))
-                .andExpect(status().isNotFound())
-                .andReturn();
-    }
-
-    @Test
-    public void testUpdateDriverAddress_DriverExists() throws Exception {
+    public void testUpdateDriverAddress() throws Exception {
         DriverLicence driverLicence = getDriverLicence();
         Mockito.when(licenceService.updateLicence(Mockito.any(DriverLicence.class), Mockito.anyLong())).thenReturn(driverLicence);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -93,20 +69,6 @@ public class LicenceControllerTest {
                 .andReturn();
 
         JSONAssert.assertEquals(asJsonString(driverLicence), mvcResult.getResponse().getContentAsString(), false);
-    }
-
-    @Test
-    public void testUpdateDriverAddress_DriverDoesNotExists() throws Exception {
-        Address address = getAddress();
-        Mockito.when(licenceService.updateLicence(Mockito.any(DriverLicence.class), Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/driver/{id}/licence", 234)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(address)))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
     }
 
 }

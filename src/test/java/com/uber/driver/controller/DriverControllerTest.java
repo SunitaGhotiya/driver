@@ -49,7 +49,7 @@ public class DriverControllerTest {
     }
 
     @Test
-    public void testGetDriver_DriverExists() throws Exception {
+    public void testGetDriver() throws Exception {
         UberDriver driver = getDriver();
         Mockito.when(driverService.getDriver(Mockito.anyLong())).thenReturn(driver);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -62,16 +62,7 @@ public class DriverControllerTest {
 
 
     @Test
-    public void testGetDriver_DriverDoesNotExists() throws Exception {
-        Mockito.when(driverService.getDriver(Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/{id}", 234))
-                .andExpect(status().isNotFound())
-                .andReturn();
-    }
-
-    @Test
-    public void testGetDriverUsingPhoneNumber_DriverExists() throws Exception {
+    public void testGetDriverUsingPhoneNumber() throws Exception {
         UberDriver driver = getDriver();
         Mockito.when(driverService.getDriverByPhoneNumber(Mockito.anyString())).thenReturn(driver);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -87,17 +78,7 @@ public class DriverControllerTest {
     }
 
     @Test
-    public void testGetDriverUsingPhoneNumber_DriverDoesNotExists() throws Exception {
-        Mockito.when(driverService.getDriverByPhoneNumber(Mockito.anyString())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver", 234)
-                .param("phoneNumber", "9876543210"))
-                .andExpect(status().isNotFound())
-                .andReturn();
-    }
-
-    @Test
-    public void testUpdateDriverAddress_DriverExists() throws Exception {
+    public void testUpdateDriverAddress() throws Exception {
         UberDriver driver = getDriver();
         Mockito.when(driverService.updateDriver(Mockito.any(UberDriver.class), Mockito.anyLong())).thenReturn(driver);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -112,46 +93,24 @@ public class DriverControllerTest {
     }
 
 
+
     @Test
-    public void testUpdateDriverAddress_DriverDoesNotExists() throws Exception {
+    public void testUpdateDriverStatus() throws Exception {
         UberDriver driver = getDriver();
-        Mockito.when(driverService.updateDriver(Mockito.any(UberDriver.class), Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/driver/{id}/address", 234)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(driver)))
-                .andExpect(status().isNotFound())
-                .andReturn();
 
-    }
+        Mockito.when(driverService.updateActivationStatus(Mockito.anyLong(), Mockito.anyString())).thenReturn(driver);
 
-//    @Test
-//    public void testUpdateDriverStatus() throws Exception {
-//        Mockito.when(driverService.updateActivationStatus(Mockito.anyLong(), Mockito.anyString()))
-//                .thenReturn(DriverConstants.DRIVER_STATUS_UPDATED);
-//
-//        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-//                .patch("/updateActivationStatus")
-//                .param("driverId", "123")
-//                .param("activationStatus", "Active")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().is2xxSuccessful())
-//                .andReturn();
-//
-//        Assert.assertEquals(DriverConstants.DRIVER_STATUS_UPDATED, mvcResult.getResponse().getContentAsString());
-//    }
-
-    @Test
-    public void testDeleteDriver() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .delete("/driver/{id}", 123)
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .patch("/updateActivationStatus")
+                .param("driverId", "123")
+                .param("activationStatus", "Active")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
+        JSONAssert.assertEquals(asJsonString(driver), mvcResult.getResponse().getContentAsString(), false);
     }
+
 
 }

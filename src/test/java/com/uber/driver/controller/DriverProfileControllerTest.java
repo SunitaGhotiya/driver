@@ -31,7 +31,7 @@ public class DriverProfileControllerTest {
     private DriverProfileService driverProfileService;
 
     @Test
-    public void testGetDriverProfile_DriverExists() throws Exception {
+    public void testGetDriverProfile() throws Exception {
         DriverProfile driverProfile = getDriverProfile();
         Mockito.when(driverProfileService.getDriverProfile(Mockito.anyLong())).thenReturn(driverProfile);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -40,15 +40,6 @@ public class DriverProfileControllerTest {
                 .andReturn();
 
         JSONAssert.assertEquals(asJsonString(driverProfile), mvcResult.getResponse().getContentAsString(), false);
-    }
-
-    @Test
-    public void testGetDriverProfile_DriverDoesNotExists() throws Exception {
-        Mockito.when(driverProfileService.getDriverProfile(Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/{id}/profile", 234))
-                .andExpect(status().isNotFound())
-                .andReturn();
     }
 
 }

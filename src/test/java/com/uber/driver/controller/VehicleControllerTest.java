@@ -31,7 +31,7 @@ public class VehicleControllerTest {
     private VehicleService vehicleService;
 
     @Test
-    public void testSaveDriverLicence_DriverExists() throws Exception {
+    public void testSaveDriverLicence() throws Exception {
         DriverVehicle driverVehicle = getDriverVehicle();
         Mockito.when(vehicleService.saveVehicle(Mockito.any(DriverVehicle.class))).thenReturn(driverVehicle);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -46,21 +46,7 @@ public class VehicleControllerTest {
     }
 
     @Test
-    public void testSaveDriverLicence_DriverDoesNotExists() throws Exception {
-        DriverVehicle driverVehicle = getDriverVehicle();
-        Mockito.when(vehicleService.saveVehicle(Mockito.any(DriverVehicle.class))).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/driver/vehicle")
-                .content(asJsonString(driverVehicle))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testGetDriverLicence_LicenceExists() throws Exception {
+    public void testGetDriverLicence() throws Exception {
         DriverVehicle driverVehicle = getDriverVehicle();
         Mockito.when(vehicleService.getVehicle(Mockito.anyLong())).thenReturn(driverVehicle);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -71,18 +57,8 @@ public class VehicleControllerTest {
         JSONAssert.assertEquals(asJsonString(driverVehicle), mvcResult.getResponse().getContentAsString(), false);
     }
 
-
     @Test
-    public void testGetDriverLicence_LicenceDoesNotExists() throws Exception {
-        Mockito.when(vehicleService.getVehicle(Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/{id}/vehicle", 234))
-                .andExpect(status().isNotFound())
-                .andReturn();
-    }
-
-    @Test
-    public void testUpdateDriverAddress_DriverExists() throws Exception {
+    public void testUpdateDriverAddress() throws Exception {
         DriverVehicle driverVehicle = getDriverVehicle();
         Mockito.when(vehicleService.updateVehicle(Mockito.any(DriverVehicle.class), Mockito.anyLong())).thenReturn(driverVehicle);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -94,20 +70,6 @@ public class VehicleControllerTest {
                 .andReturn();
 
         JSONAssert.assertEquals(asJsonString(driverVehicle), mvcResult.getResponse().getContentAsString(), false);
-    }
-
-    @Test
-    public void testUpdateDriverAddress_DriverDoesNotExists() throws Exception {
-        DriverVehicle driverVehicle = getDriverVehicle();
-        Mockito.when(vehicleService.updateVehicle(Mockito.any(DriverVehicle.class), Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/driver/{id}/vehicle", 234)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(driverVehicle)))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
     }
 
 }

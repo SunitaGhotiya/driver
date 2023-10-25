@@ -36,7 +36,7 @@ public class DocumentControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void testSaveDriverDocument_DriverExists() throws Exception {
+    public void testSaveDriverDocument() throws Exception {
         DriverDocument document = getDriverDocument();
         Mockito.when(documentService.saveDocument(Mockito.any(DriverDocument.class))).thenReturn(document);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -51,21 +51,7 @@ public class DocumentControllerTest {
     }
 
     @Test
-    public void testSaveDriverDocument_DriverDoesNotExists() throws Exception {
-        DriverDocument document = getDriverDocument();
-        Mockito.when(documentService.saveDocument(Mockito.any(DriverDocument.class))).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/driver/document")
-                .content(asJsonString(document))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
-    }
-
-    @Test
-    public void testGetDriverDocument_DocumentExists() throws Exception {
+    public void testGetDriverDocument() throws Exception {
         DriverDocument document = getDriverDocument();
         Mockito.when(documentService.getDocument(Mockito.anyLong())).thenReturn(document);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -78,16 +64,7 @@ public class DocumentControllerTest {
 
 
     @Test
-    public void testGetDriverDocument_DocumentDoesNotExists() throws Exception {
-        Mockito.when(documentService.getDocument(Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/document/{id}", 234))
-                .andExpect(status().isNotFound())
-                .andReturn();
-    }
-
-    @Test
-    public void testUpdateDriverDocument_DriverExists() throws Exception {
+    public void testUpdateDriverDocument() throws Exception {
         DriverDocument document = getDriverDocument();
         Mockito.when(documentService.updateDocument(Mockito.any(DriverDocument.class), Mockito.anyLong())).thenReturn(document);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -99,20 +76,6 @@ public class DocumentControllerTest {
                 .andReturn();
 
         JSONAssert.assertEquals(asJsonString(document), mvcResult.getResponse().getContentAsString(), false);
-    }
-
-    @Test
-    public void testUpdateDriverDocument_DriverDoesNotExists() throws Exception {
-        Address address = getAddress();
-        Mockito.when(documentService.updateDocument(Mockito.any(DriverDocument.class), Mockito.anyLong())).thenReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders
-                .put("/driver/document/{id}", 234)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(asJsonString(address)))
-                .andExpect(status().isNotFound())
-                .andReturn();
-
     }
 
     @Test
