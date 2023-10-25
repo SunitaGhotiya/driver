@@ -1,6 +1,9 @@
 package com.uber.driver.service;
 
+import com.uber.driver.model.UserOtpAuthentication;
+import com.uber.driver.model.UserToken;
+
 public interface SignUpService {
-    String generateAndSendOTP(String phoneNumber);
-    String validateOTPAndGenerateToken(String phoneNumber, int otp);
+    UserOtpAuthentication generateAndSendOTP(String phoneNumber);
+    UserToken validateOTPAndGenerateToken(String phoneNumber, int otp);
 }

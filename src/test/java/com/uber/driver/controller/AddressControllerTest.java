@@ -1,0 +1,123 @@
+package com.uber.driver.controller;
+
+import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.exception.ResourceNotFoundException;
+import com.uber.driver.model.Address;
+import com.uber.driver.service.AddressService;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static com.uber.driver.util.TestUtil.asJsonString;
+import static com.uber.driver.util.TestUtil.getAddress;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest
+@AutoConfigureMockMvc(addFilters = false)
+@ContextConfiguration(classes = AddressController.class)
+public class AddressControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private AddressService addressService;
+
+    @Test
+    public void testSaveDriverAddress_DriverExists() throws Exception {
+        Address address = getAddress();
+        Mockito.when(addressService.saveAddress(Mockito.any(Address.class))).thenReturn(address);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/driver/address")
+                .content(asJsonString(address))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(address), mvcResult.getResponse().getContentAsString(), false);
+    }
+
+    @Test
+    public void testSaveDriverAddress_DriverDoesNotExists() throws Exception {
+        Address address = getAddress();
+        Mockito.when(addressService.saveAddress(Mockito.any(Address.class)))
+                .thenThrow(new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST));
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/driver/address")
+                .content(asJsonString(address))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+    }
+
+    @Test
+    public void testGetDriverAddress_AddressExists() throws Exception {
+        Address address = getAddress();
+        Mockito.when(addressService.getAddress(Mockito.anyLong())).thenReturn(address);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .get("/driver/{id}/address", 123))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(address), mvcResult.getResponse().getContentAsString(), false);
+    }
+
+
+    @Test
+    public void testGetDriverAddress_AddressDoesNotExists() throws Exception {
+        Mockito.when(addressService.getAddress(Mockito.anyLong()))
+                .thenThrow(new ResourceNotFoundException(DriverConstants.ADDRESS_DOES_NOT_EXIST));
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/driver/{id}/address", 234))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
+                .andExpect(result -> Assertions.assertEquals(DriverConstants.ADDRESS_DOES_NOT_EXIST,
+                        result.getResolvedException().getMessage()));
+
+    }
+
+    @Test
+    public void testUpdateDriverAddress_DriverExists() throws Exception {
+        Address address = getAddress();
+        Mockito.when(addressService.updateAddress(Mockito.any(Address.class), Mockito.anyLong())).thenReturn(address);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .put("/driver/{id}/address", 123)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(address)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(address), mvcResult.getResponse().getContentAsString(), false);
+    }
+
+    @Test
+    public void testUpdateDriverAddress_DriverDoesNotExists() throws Exception {
+        Address address = getAddress();
+        Mockito.when(addressService.updateAddress(Mockito.any(Address.class), Mockito.anyLong()))
+                .thenThrow(new ResourceNotFoundException(DriverConstants.ADDRESS_DOES_NOT_EXIST));
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/driver/{id}/address", 234)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(address)))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+    }
+
+}

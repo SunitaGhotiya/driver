@@ -1,5 +1,7 @@
 package com.uber.driver.service;
 
+import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.DriverVehicle;
 import com.uber.driver.reposiotry.VehicleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,13 @@ public class VehicleServiceImpl implements VehicleService{
         if(driverService.checkIfDriverExist(driverVehicle.getDriverId()))
             return vehicleRepository.save(driverVehicle);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST);
     }
 
     @Override
     public DriverVehicle getVehicle(long driverId) {
-        return vehicleRepository.findById(driverId).orElse(null);
+        return vehicleRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.VEHICLE_DOES_NOT_EXIST));
     }
 
     @Override
@@ -31,7 +34,7 @@ public class VehicleServiceImpl implements VehicleService{
         if(checkIfVehicleExist(driverId))
             return vehicleRepository.save(driverVehicle);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.VEHICLE_DOES_NOT_EXIST);
     }
 
     private boolean checkIfVehicleExist(long driverId){

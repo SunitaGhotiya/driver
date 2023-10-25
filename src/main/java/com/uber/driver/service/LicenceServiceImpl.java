@@ -1,5 +1,7 @@
 package com.uber.driver.service;
 
+import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.DriverLicence;
 import com.uber.driver.reposiotry.LicenceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,13 @@ public class LicenceServiceImpl implements LicenceService{
         if(driverService.checkIfDriverExist(driverLicence.getDriverID()))
             return licenceRepository.save(driverLicence);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST);
     }
 
     @Override
     public DriverLicence getLicence(long driverId) {
-        return licenceRepository.findById(driverId).orElse(null);
+        return licenceRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.LICENCE_DOES_NOT_EXIST));
     }
 
     @Override
@@ -31,7 +34,7 @@ public class LicenceServiceImpl implements LicenceService{
         if(checkIfLicenceExist(driverId))
             return licenceRepository.save(driverLicence);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.LICENCE_DOES_NOT_EXIST);
     }
 
     private boolean checkIfLicenceExist(long driverId){

@@ -3,6 +3,7 @@ package com.uber.driver.controller;
 import com.uber.driver.model.Address;
 import com.uber.driver.model.DriverLicence;
 import com.uber.driver.service.LicenceService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Objects;
 
 
+@Slf4j
 @RestController
 public class LicenceController {
 
@@ -18,29 +20,23 @@ public class LicenceController {
 
     @PostMapping("/driver/licence")
     public ResponseEntity<DriverLicence> saveLicence(@RequestBody DriverLicence licence){
+        log.info("Request Received to save Driver Licence for driverID : {}", licence.getDriverID());
         DriverLicence driverLicence = LicenceService.saveLicence(licence);
-        if(Objects.nonNull(driverLicence))
-            return ResponseEntity.ok(driverLicence);
-        else
-            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(driverLicence);
     }
 
     @GetMapping("/driver/{id}/licence")
     public ResponseEntity<DriverLicence> getLicence(@PathVariable("id") long driverId){
+        log.info("Request Received to get Driver Licence for driverID : {}", driverId);
         DriverLicence Licence = LicenceService.getLicence(driverId);
-        if(Objects.nonNull(Licence))
-            return ResponseEntity.ok(Licence);
-        else
-            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(Licence);
     }
 
     @PutMapping("/driver/{id}/licence")
     public ResponseEntity<DriverLicence> updateLicence(@PathVariable("id") long driverId, @RequestBody DriverLicence driverLicence){
+        log.info("Request Received to update Driver Licence for driverID : {}", driverLicence.getDriverID());
         DriverLicence driver = LicenceService.updateLicence(driverLicence, driverId);
-        if(Objects.nonNull(driver))
-            return ResponseEntity.ok(driver);
-        else
-            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(driver);
     }
  
 }

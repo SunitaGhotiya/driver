@@ -9,7 +9,7 @@ public interface DriverService {
     UberDriver saveDriver(UberDriver uberDriver);
     UberDriver updateDriver(UberDriver uberDriver, long driverId);
     void deleteDriver(long driverId);
-    String updateActivationStatus(long driverId, String activationStatus);
+    UberDriver updateActivationStatus(long driverId, String activationStatus);
     void updateComplianceStatus(long driverId, DriverComplianceStatus complianceStatus);
     boolean checkIfDriverExist(long driverId);
 }

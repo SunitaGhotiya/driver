@@ -1,12 +1,20 @@
 package com.uber.driver.service;
 
+import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.enums.DocumentStatus;
+import com.uber.driver.enums.DriverComplianceStatus;
+import com.uber.driver.exception.AuthenticationException;
+import com.uber.driver.model.UserToken;
+import com.uber.driver.reposiotry.UserTokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
@@ -14,16 +22,25 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
+@Slf4j
+@Component
 public class JwtServiceImpl implements JwtService {
 
     @Value("${spring.security.key}")
     private String secret;
 
+    @Autowired
+    private UserTokenRepository userTokenRepository;
+
     @Override
-    public String generateToken(String phoneNumber) {
+    public UserToken generateToken(String phoneNumber) {
+        log.info("Generate token for phoneNumber : {}", phoneNumber);
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, phoneNumber);
+        String token =  createToken(claims, phoneNumber);
+        UserToken userToken = new UserToken(phoneNumber, token);
+        userTokenRepository.save(userToken);
+        log.info("Token generated and saved in Cache ");
+        return userToken;
     }
 
     private String createToken(Map<String, Object> claims, String phoneNumber) {
@@ -40,11 +57,12 @@ public class JwtServiceImpl implements JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    @Override
     public String extractPhoneNumber(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
@@ -58,15 +76,29 @@ public class JwtServiceImpl implements JwtService {
                 .getBody();
     }
 
+    @Override
     public Boolean validateToken(String token, String phoneNumber) {
-        final String phoneNumberToken = extractPhoneNumber(token);
-        return (phoneNumberToken.equals(phoneNumber) && !isTokenExpired(token));
+        UserToken userToken = userTokenRepository.findById(phoneNumber)
+                .orElseThrow(() -> new AuthenticationException(DriverConstants.INVALID_TOKEN));
+
+        log.info("Checking if token is expired, then remove from cache");
+        boolean isTokenExpired = isTokenExpired(token);
+        if(isTokenExpired)
+            userTokenRepository.deleteById(phoneNumber);
+
+        log.info("Checking if token is same as stored in cache for the phoneNumber :{}" +
+                "if the phoneNumber in token is same as stored" +
+                "If the token is not expired : Then valid token !", phoneNumber);
+        return (token.equals(userToken.getToken()) &&
+                userToken.getPhoneNumber().equals(phoneNumber) &&
+                !isTokenExpired);
     }
 
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
+    @Override
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }

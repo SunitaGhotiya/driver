@@ -13,9 +13,6 @@ public interface DriverRepository extends CrudRepository<UberDriver, Long> {
     @Query("from UberDriver where phoneNumber = :phoneNumber")
     UberDriver findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
 
-    @Query("UPDATE UberDriver SET activationStatus = :activationStatus where driverId = :driverId")
-    void updateActivationStatus(@Param("driverId") long driverId, @Param("activationStatus") String activationStatus);
-
     @Query("UPDATE UberDriver SET complianceStatus = :complianceStatus where driverId = :driverId")
     void updateComplianceStatus(@Param("driverId") long driverId,  @Param("complianceStatus") String complianceStatus);
 

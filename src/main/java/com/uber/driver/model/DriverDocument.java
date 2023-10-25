@@ -17,13 +17,13 @@ import javax.persistence.Id;
 public class DriverDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    String documentId;
-    long driverId;
-    String type;
-    String label;
-    String location;
-    DocumentStatus status;
-    String statusDetails;
+    private long documentId;
+    private long driverId;
+    private String type;
+    private String label;
+    private String location;
+    private DocumentStatus status;
+    private String statusDetails;
 
     public DriverDocument(long driverId, DocumentType documentType){
         this.driverId = driverId;

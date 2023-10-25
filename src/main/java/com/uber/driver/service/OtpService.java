@@ -1,6 +1,8 @@
 package com.uber.driver.service;
 
+import com.uber.driver.model.UserOtpAuthentication;
+
 public interface OtpService {
-    int generateOTP(String phoneNumber);
+    UserOtpAuthentication generateOTP(String phoneNumber);
     boolean validateOTP(String phoneNumber, int otp);
 }

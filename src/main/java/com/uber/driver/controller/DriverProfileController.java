@@ -4,6 +4,7 @@ package com.uber.driver.controller;
 import com.uber.driver.model.DriverProfile;
 import com.uber.driver.model.UberDriver;
 import com.uber.driver.service.DriverProfileService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
+@Slf4j
 @RestController
 public class DriverProfileController {
 
@@ -20,10 +22,8 @@ public class DriverProfileController {
 
     @GetMapping("/driver/{id}/profile")
     public ResponseEntity<DriverProfile> getDriverProfile(@PathVariable("id") long driverId){
+        log.info("Request Received to get Driver Profile for driverID : {}", driverId);
         DriverProfile driverProfile = driverProfileService.getDriverProfile(driverId);
-        if(Objects.nonNull(driverProfile))
-            return ResponseEntity.ok(driverProfile);
-        else
-            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(driverProfile);
     }
 }

@@ -1,5 +1,7 @@
 package com.uber.driver.service;
 
+import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.Address;
 import com.uber.driver.reposiotry.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +20,13 @@ public class AddressServiceImpl implements AddressService {
         if(driverService.checkIfDriverExist(address.getDriverId()))
             return addressRepository.save(address);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST);
     }
 
     @Override
     public Address getAddress(long driverId) {
-        return addressRepository.findById(driverId).orElse(null);
+        return addressRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.ADDRESS_DOES_NOT_EXIST));
     }
 
     @Override
@@ -31,7 +34,7 @@ public class AddressServiceImpl implements AddressService {
         if(checkIfAddressExist(driverId))
             return addressRepository.save(address);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.ADDRESS_DOES_NOT_EXIST);
     }
 
     private boolean checkIfAddressExist(long driverId){

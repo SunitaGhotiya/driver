@@ -1,13 +1,19 @@
 package com.uber.driver.service;
 
+import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.enums.DocumentStatus;
 import com.uber.driver.enums.DriverComplianceStatus;
+import com.uber.driver.exception.ResourceCannotBeUpdatedException;
+import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.UberDriver;
 import com.uber.driver.reposiotry.DriverRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
+@Slf4j
 @Service
 public class DriverServiceImpl implements DriverService{
     @Autowired
@@ -15,12 +21,17 @@ public class DriverServiceImpl implements DriverService{
 
     @Override
     public UberDriver getDriver(long driverId) {
-        return driverRepository.findById(driverId).orElse(null);
+        return driverRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST));
     }
 
     @Override
     public UberDriver getDriverByPhoneNumber(String phoneNumber) {
-        return driverRepository.findByPhoneNumber(phoneNumber);
+        UberDriver driver = driverRepository.findByPhoneNumber(phoneNumber);
+        if(Objects.nonNull(driver))
+            return driverRepository.findByPhoneNumber(phoneNumber);
+        else
+            throw new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST);
     }
 
     @Override
@@ -33,7 +44,7 @@ public class DriverServiceImpl implements DriverService{
         if(checkIfDriverExist(driverId))
             return driverRepository.save(uberDriver);
         else
-            return null;
+            throw new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST);
     }
 
     @Override
@@ -42,17 +53,20 @@ public class DriverServiceImpl implements DriverService{
     }
 
     @Override
-    public String updateActivationStatus(long driverId, String activationStatus) {
+    public UberDriver updateActivationStatus(long driverId, String activationStatus) {
         UberDriver uberDriver = getDriver(driverId);
         if(Objects.nonNull(uberDriver))
         {
-            if(uberDriver.getComplianceStatus().equals(DriverComplianceStatus.ONBOARDED))
-                return "Activation status updated to : "+ activationStatus;
+            if(DriverComplianceStatus.ONBOARDED == uberDriver.getComplianceStatus()){
+                log.info("Driver Comliance status : {}, Set Driver ActivationStatus to : {} ", DriverComplianceStatus.ONBOARDED, DocumentStatus.VERIFIED);
+                uberDriver.setActivationStatus(activationStatus);
+                return updateDriver(uberDriver, driverId);
+            }
             else
-                return "Driver Actuvation status Can't be updated as DriverComplianceStatus: "+ uberDriver.getComplianceStatus();
+                throw new ResourceCannotBeUpdatedException(DriverConstants.DRIVER_NOT_ONBOARDED);
         }
         else
-            return "Driver Does Not Exist!";
+            throw new ResourceNotFoundException(DriverConstants.DRIVER_DOES_NOT_EXIST);
     }
 
     @Override
