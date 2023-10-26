@@ -56,9 +56,9 @@ public class DriverServiceImpl implements DriverService{
     public UberDriver updateBgCheckStatus(String driverId, BackgroundCheckStatus backgroundCheckStatus) {
         UberDriver uberDriver = getDriver(driverId);
         if(uberDriver.isDocVerified()) {
-            if((backgroundCheckStatus == BackgroundCheckStatus.BG_CHECK_DONE
-                    || backgroundCheckStatus == BackgroundCheckStatus.BG_CHECK_REJECTED)
-                    && uberDriver.getBackgroundCheckStatus() == BackgroundCheckStatus.BG_CHECK_INIT){
+            if(backgroundCheckStatus == BackgroundCheckStatus.BG_CHECK_INIT
+                    || ((backgroundCheckStatus == BackgroundCheckStatus.BG_CHECK_DONE || backgroundCheckStatus == BackgroundCheckStatus.BG_CHECK_REJECTED)
+                        && uberDriver.getBackgroundCheckStatus() == BackgroundCheckStatus.BG_CHECK_INIT)){
 
                 uberDriver.setBackgroundCheckStatus(backgroundCheckStatus);
                 return driverRepository.save(uberDriver);
@@ -135,8 +135,9 @@ public class DriverServiceImpl implements DriverService{
         TrackingDeviceStatus currentDeviceStatus = driver.getTrackingDeviceStatus();
         switch (newDeviceStatus) {
             case DEVICE_ACTIVE:
+                return TrackingDeviceStatus.DEVICE_DELIVERED == currentDeviceStatus || TrackingDeviceStatus.DEVICE_ERROR == currentDeviceStatus;
             case DEVICE_ERROR:
-                return TrackingDeviceStatus.DEVICE_DELIVERED == currentDeviceStatus;
+                return TrackingDeviceStatus.DEVICE_DELIVERED == currentDeviceStatus || TrackingDeviceStatus.DEVICE_ACTIVE == currentDeviceStatus;
             case DEVICE_DELIVERED:
                 return TrackingDeviceStatus.DEVICE_DISPATCHED == currentDeviceStatus;
             case DEVICE_DISPATCHED:

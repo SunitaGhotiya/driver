@@ -83,14 +83,14 @@ public class DocumentServiceImpl implements DocumentService{
     @Override
     public void updateDocumentUrl(String documentId, String documentURL) {
         documentRepository.updateDocumentLocation(documentId, documentURL);
-        updateDocumentStatus(documentId, DocumentStatus.IN_REVIEW);
+        documentRepository.updateDocumentStatus(documentId, DocumentStatus.IN_REVIEW);
     }
 
     @Override
     public void updateDocumentStatus(String documentId, DocumentStatus documentStatus) {
         DriverDocument driverDocument = getDocument(documentId);
         if(Objects.nonNull(driverDocument)){
-            documentRepository.updateDocumentStatus(documentId, documentStatus.toString());
+            documentRepository.updateDocumentStatus(documentId, documentStatus);
 
             if(documentStatus == DocumentStatus.VERIFIED) {
                 log.info("Document Status : {} : Check status of all documents to update driver onboarding status", DocumentStatus.VERIFIED);
