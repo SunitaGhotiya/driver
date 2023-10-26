@@ -31,7 +31,7 @@ public class VehicleServiceImplTest {
     @Before
     public void init(){
         vehicle = DriverVehicle.builder()
-                .driverId(123)
+                .driverId("123")
                 .vehicleNo("1503")
                 .type("Four Wheeler")
                 .build();
@@ -40,20 +40,20 @@ public class VehicleServiceImplTest {
 
     @Test
     public void getVehicleIfDriverExists() {
-        Mockito.when(vehicleRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(vehicle));
-        Assert.assertEquals(vehicle, vehicleService.getVehicle(123));
+        Mockito.when(vehicleRepository.findById(Mockito.anyString())).thenReturn(Optional.of(vehicle));
+        Assert.assertEquals(vehicle, vehicleService.getVehicle("123"));
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getVehicleIfDriverDoesNotExists() {
-        Mockito.when(vehicleRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        vehicleService.getVehicle(123);
+        Mockito.when(vehicleRepository.findById(Mockito.anyString())).thenReturn(Optional.empty());
+        vehicleService.getVehicle("123");
     }
 
 
     @Test
     public void saveVehicleIfDriverExists(){
-        Mockito.when(driverService.checkIfDriverExist(Mockito.anyLong())).thenReturn(true);
+        Mockito.when(driverService.checkIfDriverExist(Mockito.anyString())).thenReturn(true);
         Mockito.when(vehicleRepository.save(Mockito.any(DriverVehicle.class))).thenReturn(vehicle);
 
         Assert.assertEquals(vehicle, vehicleService.saveVehicle(vehicle));
@@ -61,22 +61,22 @@ public class VehicleServiceImplTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void saveVehicleIfDriverDoesNotExist(){
-        Mockito.when(driverService.checkIfDriverExist(Mockito.anyLong())).thenReturn(false);
+        Mockito.when(driverService.checkIfDriverExist(Mockito.anyString())).thenReturn(false);
         vehicleService.saveVehicle(vehicle);
     }
 
     @Test
     public void updateVehicleIfDriverExists(){
-        Mockito.when(vehicleRepository.existsById(Mockito.anyLong())).thenReturn(true);
+        Mockito.when(vehicleRepository.existsById(Mockito.anyString())).thenReturn(true);
         Mockito.when(vehicleRepository.save(Mockito.any(DriverVehicle.class))).thenReturn(vehicle);
 
-        Assert.assertEquals(vehicle, vehicleService.updateVehicle(vehicle, 123));
+        Assert.assertEquals(vehicle, vehicleService.updateVehicle(vehicle, "123"));
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void updateVehicleIfDriverDoesNotExist(){
-        Mockito.when(vehicleRepository.existsById(Mockito.anyLong())).thenReturn(false);
-        vehicleService.updateVehicle(vehicle, 123);
+        Mockito.when(vehicleRepository.existsById(Mockito.anyString())).thenReturn(false);
+        vehicleService.updateVehicle(vehicle, "123");
     }
 
 

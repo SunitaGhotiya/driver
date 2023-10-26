@@ -47,7 +47,7 @@ public class LicenceControllerTest {
     @Test
     public void testGetDriverLicence() throws Exception {
         DriverLicence driverLicence = getDriverLicence();
-        Mockito.when(licenceService.getLicence(Mockito.anyLong())).thenReturn(driverLicence);
+        Mockito.when(licenceService.getLicence(Mockito.anyString())).thenReturn(driverLicence);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/driver/{id}/licence", 123))
                 .andExpect(status().is2xxSuccessful())
@@ -59,7 +59,7 @@ public class LicenceControllerTest {
     @Test
     public void testUpdateDriverAddress() throws Exception {
         DriverLicence driverLicence = getDriverLicence();
-        Mockito.when(licenceService.updateLicence(Mockito.any(DriverLicence.class), Mockito.anyLong())).thenReturn(driverLicence);
+        Mockito.when(licenceService.updateLicence(Mockito.any(DriverLicence.class), Mockito.anyString())).thenReturn(driverLicence);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .put("/driver/{id}/licence", 123)
                 .contentType(MediaType.APPLICATION_JSON)

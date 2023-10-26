@@ -2,6 +2,7 @@ package com.uber.driver.controller;
 
 import com.uber.driver.enums.DocumentStatus;
 import com.uber.driver.model.DriverDocument;
+import com.uber.driver.model.UrlResponse;
 import com.uber.driver.service.DocumentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,36 +27,42 @@ public class DocumentController {
     }
 
     @GetMapping("/driver/document/{id}")
-    public ResponseEntity<DriverDocument> getDriverDocument(@PathVariable("id") long documentId){
+    public ResponseEntity<DriverDocument> getDriverDocument(@PathVariable("id") String documentId){
         log.info("Request Received to get driver Document for documentID : {}", documentId);
         DriverDocument driverDocument = documentService.getDocument(documentId);
         return ResponseEntity.ok(driverDocument);
     }
 
     @PutMapping("/driver/document/{id}")
-    public ResponseEntity<DriverDocument> updateDriverDocument(@RequestBody DriverDocument driverDocument, @PathVariable("id") long documentId){
+    public ResponseEntity<DriverDocument> updateDriverDocument(@RequestBody DriverDocument driverDocument, @PathVariable("id") String documentId){
         log.info("Request Received to update driver Document for driverID : {} and documentID : {}", driverDocument.getDriverId(), documentId);
         DriverDocument document = documentService.updateDocument(driverDocument, documentId);
         return ResponseEntity.ok(document);
     }
 
     @GetMapping("/driver/{id}/documents")
-    public ResponseEntity<List<DriverDocument>> getAllDriverDocuments(@PathVariable("id") long driverId){
+    public ResponseEntity<List<DriverDocument>> getAllDriverDocuments(@PathVariable("id") String driverId){
         log.info("Request Received to get all Documents for driverID : {}", driverId);
         List<DriverDocument> driverDocuments = documentService.getAllDocuments(driverId);
         return ResponseEntity.ok(driverDocuments);
     }
 
-    @PostMapping("/getDocumentUrl")
-    public ResponseEntity<String> getDocumentUrl(@RequestParam long documentId){
-        log.info("Request Received to get new Document URL for documentID : {}", documentId);
-        String documentUrl = documentService.getDocumentUrl(documentId);
+    @PostMapping("/updateDocumentUrl")
+    public void updateDocumentUrl(@RequestParam String documentId, @RequestParam String documentURL){
+        log.info("Request Received to update Document URl : {} for documentID : {}", documentURL, documentId);
+        documentService.updateDocumentUrl(documentId, documentURL);
+    }
+
+    @GetMapping("/getPresignedUrl")
+    public ResponseEntity<UrlResponse> getPresignedUrl(){
+        log.info("Request Received to get presigned URL");
+        String documentUrl = documentService.getDocumentUrl();
         log.info("Generated URL : {}", documentUrl);
-        return ResponseEntity.ok(documentUrl);
+        return ResponseEntity.ok(new UrlResponse(documentUrl));
     }
 
     @PostMapping("/updateDocumentStatus")
-    public void updateDocumentStatus(@RequestParam long documentId, @RequestParam DocumentStatus documentStatus){
+    public void updateDocumentStatus(@RequestParam String documentId, @RequestParam DocumentStatus documentStatus){
         log.info("Request Received to update Document status : {} for documentID : {}", documentStatus, documentId);
         documentService.updateDocumentStatus(documentId, documentStatus);
     }

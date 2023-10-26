@@ -24,20 +24,20 @@ public class LicenceServiceImpl implements LicenceService{
     }
 
     @Override
-    public DriverLicence getLicence(long driverId) {
+    public DriverLicence getLicence(String driverId) {
         return licenceRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.LICENCE_DOES_NOT_EXIST));
     }
 
     @Override
-    public DriverLicence updateLicence(DriverLicence driverLicence, long driverId) {
+    public DriverLicence updateLicence(DriverLicence driverLicence, String driverId) {
         if(checkIfLicenceExist(driverId))
             return licenceRepository.save(driverLicence);
         else
             throw new ResourceNotFoundException(DriverConstants.LICENCE_DOES_NOT_EXIST);
     }
 
-    private boolean checkIfLicenceExist(long driverId){
+    private boolean checkIfLicenceExist(String driverId){
         return licenceRepository.existsById(driverId);
     }
 

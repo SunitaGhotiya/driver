@@ -4,6 +4,6 @@ import com.uber.driver.model.Address;
 
 public interface AddressService {
     Address saveAddress(Address address);
-    Address getAddress(long driverId);
-    Address updateAddress(Address address, long driverId);
+    Address getAddress(String driverId);
+    Address updateAddress(Address address, String driverId);
 }

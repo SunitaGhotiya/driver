@@ -7,9 +7,10 @@ import java.util.List;
 
 public interface DocumentService {
     DriverDocument saveDocument(DriverDocument driverDocument);
-    DriverDocument getDocument(long documentId);
-    DriverDocument updateDocument(DriverDocument driverDocument, long documentId);
-    List<DriverDocument> getAllDocuments(long driverId);
-    String getDocumentUrl(long documentId);
-    void updateDocumentStatus(long documentId, DocumentStatus documentStatus);
+    DriverDocument getDocument(String documentId);
+    DriverDocument updateDocument(DriverDocument driverDocument, String documentId);
+    List<DriverDocument> getAllDocuments(String driverId);
+    String getDocumentUrl();
+    void updateDocumentStatus(String documentId, DocumentStatus documentStatus);
+    void updateDocumentUrl(String documentId, String documentUrl);
 }

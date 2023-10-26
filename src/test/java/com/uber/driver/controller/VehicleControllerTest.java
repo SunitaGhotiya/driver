@@ -48,7 +48,7 @@ public class VehicleControllerTest {
     @Test
     public void testGetDriverLicence() throws Exception {
         DriverVehicle driverVehicle = getDriverVehicle();
-        Mockito.when(vehicleService.getVehicle(Mockito.anyLong())).thenReturn(driverVehicle);
+        Mockito.when(vehicleService.getVehicle(Mockito.anyString())).thenReturn(driverVehicle);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/driver/{id}/vehicle", 123))
                 .andExpect(status().is2xxSuccessful())
@@ -60,7 +60,7 @@ public class VehicleControllerTest {
     @Test
     public void testUpdateDriverAddress() throws Exception {
         DriverVehicle driverVehicle = getDriverVehicle();
-        Mockito.when(vehicleService.updateVehicle(Mockito.any(DriverVehicle.class), Mockito.anyLong())).thenReturn(driverVehicle);
+        Mockito.when(vehicleService.updateVehicle(Mockito.any(DriverVehicle.class), Mockito.anyString())).thenReturn(driverVehicle);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .put("/driver/{id}/vehicle", 123)
                 .contentType(MediaType.APPLICATION_JSON)

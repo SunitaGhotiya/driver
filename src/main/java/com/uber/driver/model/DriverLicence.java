@@ -16,7 +16,7 @@ import java.util.Date;
 @Builder
 public class DriverLicence {
     @Id
-    private long driverID;
+    private String driverID;
     private String licenceNo;
     @JsonFormat(pattern="dd-mm-yyyy")
     private Date expirationDate;

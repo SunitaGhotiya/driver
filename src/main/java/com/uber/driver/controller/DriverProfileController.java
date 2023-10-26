@@ -21,7 +21,7 @@ public class DriverProfileController {
     private DriverProfileService driverProfileService;
 
     @GetMapping("/driver/{id}/profile")
-    public ResponseEntity<DriverProfile> getDriverProfile(@PathVariable("id") long driverId){
+    public ResponseEntity<DriverProfile> getDriverProfile(@PathVariable("id") String driverId){
         log.info("Request Received to get Driver Profile for driverID : {}", driverId);
         DriverProfile driverProfile = driverProfileService.getDriverProfile(driverId);
         return ResponseEntity.ok(driverProfile);

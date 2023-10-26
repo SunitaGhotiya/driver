@@ -4,6 +4,6 @@ import com.uber.driver.model.DriverLicence;
 
 public interface LicenceService {
     DriverLicence saveLicence(DriverLicence driverLicence);
-    DriverLicence getLicence(long driverId);
-    DriverLicence updateLicence(DriverLicence driverLicence, long driverId);
+    DriverLicence getLicence(String driverId);
+    DriverLicence updateLicence(DriverLicence driverLicence, String driverId);
 }

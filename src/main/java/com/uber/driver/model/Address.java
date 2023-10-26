@@ -1,5 +1,7 @@
 package com.uber.driver.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,7 +13,9 @@ import javax.persistence.*;
 @Builder
 public class Address {
     @Id
-    private long driverId;
+//    @JsonProperty(required = true)
+//    @NotNull
+    private String driverId;
     private String addressLine1;
     private String addressLine2;
     private String city;

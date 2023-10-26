@@ -7,7 +7,7 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 
-@RedisHash
+@RedisHash(timeToLive = 180L)
 @AllArgsConstructor
 @Getter
 @Setter

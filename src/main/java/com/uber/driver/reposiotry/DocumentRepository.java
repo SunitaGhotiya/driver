@@ -9,15 +9,15 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface DocumentRepository extends CrudRepository<DriverDocument, Long> {
+public interface DocumentRepository extends CrudRepository<DriverDocument, String> {
 
     @Query("from DriverDocument where driverId = :driverId")
-    public List<DriverDocument> findAllByDriverId(@Param("driverId") long driverId);
+    List<DriverDocument> findAllByDriverId(@Param("driverId") String driverId);
 
-    @Query("UPDATE DriverDocument set location = :location where driverId = :driverId and documentId = :documentId")
-    public void updateDocumentLocation(@Param("driverId") long driverId, @Param("documentId") long documentId, @Param("location") String location);
+    @Query("UPDATE DriverDocument set location = :location where documentId = :documentId")
+    void updateDocumentLocation(@Param("documentId") String documentId, @Param("location") String location);
 
     @Query("UPDATE DriverDocument set status = :status where documentId = :documentId")
-    public void updateDocumentStatus(@Param("documentId") long documentId, @Param("status") String status);
+    void updateDocumentStatus(@Param("documentId") String documentId, @Param("status") String status);
 
 }

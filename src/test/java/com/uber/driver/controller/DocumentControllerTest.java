@@ -3,6 +3,7 @@ package com.uber.driver.controller;
 import com.uber.driver.enums.DocumentStatus;
 import com.uber.driver.model.Address;
 import com.uber.driver.model.DriverDocument;
+import com.uber.driver.model.UrlResponse;
 import com.uber.driver.service.DocumentService;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -53,9 +54,9 @@ public class DocumentControllerTest {
     @Test
     public void testGetDriverDocument() throws Exception {
         DriverDocument document = getDriverDocument();
-        Mockito.when(documentService.getDocument(Mockito.anyLong())).thenReturn(document);
+        Mockito.when(documentService.getDocument(Mockito.anyString())).thenReturn(document);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/document/{id}", 123))
+                .get("/driver/document/{id}", "123"))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 
@@ -66,9 +67,9 @@ public class DocumentControllerTest {
     @Test
     public void testUpdateDriverDocument() throws Exception {
         DriverDocument document = getDriverDocument();
-        Mockito.when(documentService.updateDocument(Mockito.any(DriverDocument.class), Mockito.anyLong())).thenReturn(document);
+        Mockito.when(documentService.updateDocument(Mockito.any(DriverDocument.class), Mockito.anyString())).thenReturn(document);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .put("/driver/document/{id}", 123)
+                .put("/driver/document/{id}", "123")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(asJsonString(document)))
@@ -80,9 +81,9 @@ public class DocumentControllerTest {
 
     @Test
     public void testGetAllDriverDocuments() throws Exception {
-        Mockito.when(documentService.getAllDocuments(Mockito.anyLong())).thenReturn(new ArrayList<>());
+        Mockito.when(documentService.getAllDocuments(Mockito.anyString())).thenReturn(new ArrayList<>());
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .get("/driver/{id}/documents", 123)
+                .get("/driver/{id}/documents", "123")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
@@ -92,15 +93,16 @@ public class DocumentControllerTest {
 
     @Test
     public void testGetDocumentUrl() throws Exception {
-        Mockito.when(documentService.getDocumentUrl(Mockito.anyLong())).thenReturn("docUrl");
-        mockMvc.perform(MockMvcRequestBuilders
-                .post("/getDocumentUrl")
-                .param("documentId", "123")
+        UrlResponse urlResponse = new UrlResponse("docUrl");
+        Mockito.when(documentService.getDocumentUrl()).thenReturn("docUrl");
+        MvcResult mvcResult =  mockMvc.perform(MockMvcRequestBuilders
+                .get("/getPresignedUrl")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(content().string("docUrl"))
                 .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(urlResponse), mvcResult.getResponse().getContentAsString(), false);
     }
 
     @Test

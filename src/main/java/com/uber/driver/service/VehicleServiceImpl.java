@@ -24,20 +24,20 @@ public class VehicleServiceImpl implements VehicleService{
     }
 
     @Override
-    public DriverVehicle getVehicle(long driverId) {
+    public DriverVehicle getVehicle(String driverId) {
         return vehicleRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.VEHICLE_DOES_NOT_EXIST));
     }
 
     @Override
-    public DriverVehicle updateVehicle(DriverVehicle driverVehicle, long driverId) {
+    public DriverVehicle updateVehicle(DriverVehicle driverVehicle, String driverId) {
         if(checkIfVehicleExist(driverId))
             return vehicleRepository.save(driverVehicle);
         else
             throw new ResourceNotFoundException(DriverConstants.VEHICLE_DOES_NOT_EXIST);
     }
 
-    private boolean checkIfVehicleExist(long driverId){
+    private boolean checkIfVehicleExist(String driverId){
         return vehicleRepository.existsById(driverId);
     }
 

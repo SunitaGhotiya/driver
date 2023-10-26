@@ -24,20 +24,20 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public Address getAddress(long driverId) {
+    public Address getAddress(String driverId) {
         return addressRepository.findById(driverId)
                 .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.ADDRESS_DOES_NOT_EXIST));
     }
 
     @Override
-    public Address updateAddress(Address address, long driverId) {
+    public Address updateAddress(Address address, String driverId) {
         if(checkIfAddressExist(driverId))
             return addressRepository.save(address);
         else
             throw new ResourceNotFoundException(DriverConstants.ADDRESS_DOES_NOT_EXIST);
     }
 
-    private boolean checkIfAddressExist(long driverId){
+    private boolean checkIfAddressExist(String driverId){
         return addressRepository.existsById(driverId);
     }
 

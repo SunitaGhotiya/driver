@@ -12,7 +12,7 @@ import javax.persistence.Id;
 @Builder
 public class DriverVehicle {
     @Id
-    private long driverId;
+    private String driverId;
     private String vehicleNo;
     private String type;
     private String name;

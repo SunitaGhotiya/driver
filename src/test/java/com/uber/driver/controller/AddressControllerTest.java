@@ -1,11 +1,7 @@
 package com.uber.driver.controller;
 
-import com.uber.driver.constant.DriverConstants;
-import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.Address;
 import com.uber.driver.service.AddressService;
-import org.junit.Assert;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -52,7 +48,7 @@ public class AddressControllerTest {
     @Test
     public void testGetDriverAddress() throws Exception {
         Address address = getAddress();
-        Mockito.when(addressService.getAddress(Mockito.anyLong())).thenReturn(address);
+        Mockito.when(addressService.getAddress(Mockito.anyString())).thenReturn(address);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/driver/{id}/address", 123))
                 .andExpect(status().is2xxSuccessful())
@@ -65,7 +61,7 @@ public class AddressControllerTest {
     @Test
     public void testUpdateDriverAddress() throws Exception {
         Address address = getAddress();
-        Mockito.when(addressService.updateAddress(Mockito.any(Address.class), Mockito.anyLong())).thenReturn(address);
+        Mockito.when(addressService.updateAddress(Mockito.any(Address.class), Mockito.anyString())).thenReturn(address);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .put("/driver/{id}/address", 123)
                 .contentType(MediaType.APPLICATION_JSON)

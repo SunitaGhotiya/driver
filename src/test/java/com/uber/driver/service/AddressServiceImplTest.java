@@ -32,7 +32,7 @@ public class AddressServiceImplTest {
     @Before
     public void init(){
         address = Address.builder()
-                .driverId(123)
+                .driverId("123")
                 .addressLine1("Addresss")
                 .city("Bangalore")
                 .country("India")
@@ -42,7 +42,7 @@ public class AddressServiceImplTest {
 
     @Test
     public void saveAddressIfDriverExists(){
-        Mockito.when(driverService.checkIfDriverExist(Mockito.anyLong())).thenReturn(true);
+        Mockito.when(driverService.checkIfDriverExist(Mockito.anyString())).thenReturn(true);
         Mockito.when(addressRepository.save(Mockito.any(Address.class))).thenReturn(address);
 
         Assert.assertEquals(address, addressService.saveAddress(address));
@@ -50,34 +50,34 @@ public class AddressServiceImplTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void saveAddressIfDriverDoesNotExist(){
-        Mockito.when(driverService.checkIfDriverExist(Mockito.anyLong())).thenReturn(false);
+        Mockito.when(driverService.checkIfDriverExist(Mockito.anyString())).thenReturn(false);
         addressService.saveAddress(address);
     }
 
     @Test
     public void getAddressIfDriverExists() {
-        Mockito.when(addressRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(address));
-        Assert.assertEquals(address, addressService.getAddress(123));
+        Mockito.when(addressRepository.findById(Mockito.anyString())).thenReturn(Optional.of(address));
+        Assert.assertEquals(address, addressService.getAddress("123"));
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getAddressIfDriverDoesNotExists() {
-        Mockito.when(addressRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
-        addressService.getAddress(123);
+        Mockito.when(addressRepository.findById(Mockito.anyString())).thenReturn(Optional.empty());
+        addressService.getAddress("123");
     }
 
     @Test
     public void updateAddressIfDriverExists(){
-        Mockito.when(addressRepository.existsById(Mockito.anyLong())).thenReturn(true);
+        Mockito.when(addressRepository.existsById(Mockito.anyString())).thenReturn(true);
         Mockito.when(addressRepository.save(Mockito.any(Address.class))).thenReturn(address);
 
-        Assert.assertEquals(address, addressService.updateAddress(address, 123));
+        Assert.assertEquals(address, addressService.updateAddress(address, "123"));
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void updateAddressIfDriverDoesNotExist(){
-        Mockito.when(addressRepository.existsById(Mockito.anyLong())).thenReturn(false);
-        addressService.updateAddress(address, 123);
+        Mockito.when(addressRepository.existsById(Mockito.anyString())).thenReturn(false);
+        addressService.updateAddress(address, "123");
     }
 
 }

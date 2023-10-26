@@ -20,7 +20,7 @@ public class DriverProfileServiceImpl implements DriverProfileService {
     private VehicleService vehicleService;
 
     @Override
-    public DriverProfile getDriverProfile(long driverId) {
+    public DriverProfile getDriverProfile(String driverId) {
         UberDriver uberDriver = driverService.getDriver(driverId);
         Address address = addressService.getAddress(driverId);
         DriverLicence driverLicence = licenceService.getLicence(driverId);

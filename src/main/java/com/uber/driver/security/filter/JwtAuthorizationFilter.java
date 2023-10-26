@@ -2,6 +2,7 @@ package com.uber.driver.security.filter;
 
 import com.uber.driver.model.PhoneNumberAuthenticationToken;
 import com.uber.driver.service.JwtService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
+@Slf4j
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter{
 
@@ -34,11 +36,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 
         if (phoneNumber != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtService.validateToken(token, phoneNumber)) {
+                log.info("Valid token for the phoneNumber :{}",phoneNumber);
                 PhoneNumberAuthenticationToken authToken = new PhoneNumberAuthenticationToken(phoneNumber, Collections.singleton(new SimpleGrantedAuthority("ROLE_DRIVER")));
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 authToken.setAuthenticated(true);
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+
         }
         filterChain.doFilter(request, response);
     }

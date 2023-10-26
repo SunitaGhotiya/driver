@@ -5,5 +5,5 @@ import com.uber.driver.model.DriverDocument;
 import java.util.List;
 
 public interface OnboardingService {
-    void updateDriverOnboardingStatus(long driverId, List<DriverDocument> driverDocuments);
+    void updateDriverOnboardingStatus(String driverId, List<DriverDocument> driverDocuments);
 }

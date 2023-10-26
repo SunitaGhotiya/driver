@@ -5,6 +5,6 @@ import com.uber.driver.model.UberDriver;
 
 public interface VehicleService {
     DriverVehicle saveVehicle(DriverVehicle driverVehicle);
-    DriverVehicle getVehicle(long driverId);
-    DriverVehicle updateVehicle(DriverVehicle driverVehicle, long driverId);
+    DriverVehicle getVehicle(String driverId);
+    DriverVehicle updateVehicle(DriverVehicle driverVehicle, String driverId);
 }

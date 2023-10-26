@@ -33,7 +33,7 @@ public class DriverProfileControllerTest {
     @Test
     public void testGetDriverProfile() throws Exception {
         DriverProfile driverProfile = getDriverProfile();
-        Mockito.when(driverProfileService.getDriverProfile(Mockito.anyLong())).thenReturn(driverProfile);
+        Mockito.when(driverProfileService.getDriverProfile(Mockito.anyString())).thenReturn(driverProfile);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/driver/{id}/profile", 123))
                 .andExpect(status().is2xxSuccessful())

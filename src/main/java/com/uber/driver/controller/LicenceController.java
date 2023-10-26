@@ -26,14 +26,14 @@ public class LicenceController {
     }
 
     @GetMapping("/driver/{id}/licence")
-    public ResponseEntity<DriverLicence> getLicence(@PathVariable("id") long driverId){
+    public ResponseEntity<DriverLicence> getLicence(@PathVariable("id") String driverId){
         log.info("Request Received to get Driver Licence for driverID : {}", driverId);
         DriverLicence Licence = LicenceService.getLicence(driverId);
         return ResponseEntity.ok(Licence);
     }
 
     @PutMapping("/driver/{id}/licence")
-    public ResponseEntity<DriverLicence> updateLicence(@PathVariable("id") long driverId, @RequestBody DriverLicence driverLicence){
+    public ResponseEntity<DriverLicence> updateLicence(@PathVariable("id") String driverId, @RequestBody DriverLicence driverLicence){
         log.info("Request Received to update Driver Licence for driverID : {}", driverLicence.getDriverID());
         DriverLicence driver = LicenceService.updateLicence(driverLicence, driverId);
         return ResponseEntity.ok(driver);

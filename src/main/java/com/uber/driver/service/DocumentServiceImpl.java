@@ -3,10 +3,10 @@ package com.uber.driver.service;
 import com.uber.driver.constant.DriverConstants;
 import com.uber.driver.enums.DocumentStatus;
 import com.uber.driver.enums.DocumentType;
-import com.uber.driver.enums.DriverComplianceStatus;
 import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.DriverDocument;
 import com.uber.driver.reposiotry.DocumentRepository;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,8 @@ public class DocumentServiceImpl implements DocumentService{
     public DriverDocument saveDocument(DriverDocument driverDocument) {
         if(driverService.checkIfDriverExist(driverDocument.getDriverId())) {
             log.info("Setting document status to {} for driverID : {}", DocumentStatus.IN_REVIEW, driverDocument.getDriverId());
-            driverDocument.setStatus(DocumentStatus.IN_REVIEW);
+            if(!StringUtil.isNullOrEmpty(driverDocument.getLocation()))
+                driverDocument.setStatus(DocumentStatus.IN_REVIEW);
             return documentRepository.save(driverDocument);
         }
         else
@@ -40,25 +41,25 @@ public class DocumentServiceImpl implements DocumentService{
     }
 
     @Override
-    public DriverDocument getDocument(long documentId) {
+    public DriverDocument getDocument(String documentId) {
         return documentRepository.findById(documentId)
                 .orElseThrow(() -> new ResourceNotFoundException(DriverConstants.DOCUMENT_DOES_NOT_EXIST));
     }
 
     @Override
-    public DriverDocument updateDocument(DriverDocument driverDocument, long documentId) {
+    public DriverDocument updateDocument(DriverDocument driverDocument, String documentId) {
         if(checkIfDocumentExist(documentId))
             return documentRepository.save(driverDocument);
         else
             throw new ResourceNotFoundException(DriverConstants.DOCUMENT_DOES_NOT_EXIST);
     }
 
-    private boolean checkIfDocumentExist(long driverId){
+    private boolean checkIfDocumentExist(String driverId){
         return documentRepository.existsById(driverId);
     }
 
     @Override
-    public List<DriverDocument> getAllDocuments(long driverId) {
+    public List<DriverDocument> getAllDocuments(String driverId) {
         List<DriverDocument> documents = documentRepository.findAllByDriverId(driverId);
         log.info("Sending empty document objects for the type of documents which are not yet created to be displayed on UI");
 
@@ -74,13 +75,19 @@ public class DocumentServiceImpl implements DocumentService{
     }
 
     @Override
-    public String getDocumentUrl(long documentId) {
+    public String getDocumentUrl() {
         String fileName = UUID.randomUUID().toString();
         return amazonS3Service.generateUrl(fileName);
     }
 
     @Override
-    public void updateDocumentStatus(long documentId, DocumentStatus documentStatus) {
+    public void updateDocumentUrl(String documentId, String documentURL) {
+        documentRepository.updateDocumentLocation(documentId, documentURL);
+        updateDocumentStatus(documentId, DocumentStatus.IN_REVIEW);
+    }
+
+    @Override
+    public void updateDocumentStatus(String documentId, DocumentStatus documentStatus) {
         DriverDocument driverDocument = getDocument(documentId);
         if(Objects.nonNull(driverDocument)){
             documentRepository.updateDocumentStatus(documentId, documentStatus.toString());
@@ -90,13 +97,9 @@ public class DocumentServiceImpl implements DocumentService{
                 List<DriverDocument> driverDocuments = getAllDocuments(driverDocument.getDriverId());
                 onboardingService.updateDriverOnboardingStatus(driverDocument.getDriverId(), driverDocuments);
             }
-            else if (documentStatus == DocumentStatus.REJECTED) {
-                log.info("Document Status : {} : update driver onboarding status to {}", DocumentStatus.VERIFIED, DriverComplianceStatus.DOC_REJECTED);
-                driverService.updateComplianceStatus(driverDocument.getDriverId(), DriverComplianceStatus.DOC_REJECTED);
-            }
             else {
-                log.info("Document Status : {} : update driver onboarding status to {}", documentStatus, DriverComplianceStatus.IN_PROGRESS);
-                driverService.updateComplianceStatus(driverDocument.getDriverId(), DriverComplianceStatus.IN_PROGRESS);
+                log.info("Document Status : {} : update driver Document verification status to false", documentStatus);
+                driverService.updateDocVerifiedStatus(driverDocument.getDriverId(), false);
             }
         }
         else

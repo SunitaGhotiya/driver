@@ -30,8 +30,8 @@ public class TestUtil {
 
     public static DriverDocument getDriverDocument(){
         return DriverDocument.builder()
-                .driverId(1)
-                .documentId(new Random().nextInt())
+                .driverId("123")
+                .documentId(String.valueOf(new Random().nextInt()))
                 .type(DocumentType.IDENTITY_PROOF.getType())
                 .label(DocumentType.IDENTITY_PROOF.getLabel())
                 .status(DocumentStatus.IN_REVIEW)
@@ -40,7 +40,7 @@ public class TestUtil {
 
     public static DriverLicence getDriverLicence() throws ParseException {
         return DriverLicence.builder()
-                .driverID(123)
+                .driverID("123")
                 .licenceNo("L123")
                 .expirationDate(new SimpleDateFormat("yyyy-MM-dd").parse("2030-12-31"))
                 .build();
@@ -48,7 +48,7 @@ public class TestUtil {
 
     public static DriverVehicle getDriverVehicle(){
         return DriverVehicle.builder()
-                .driverId(123)
+                .driverId("123")
                 .vehicleNo("1503")
                 .type("Four Wheeler")
                 .build();
@@ -56,7 +56,7 @@ public class TestUtil {
 
     public static UberDriver getDriver(){
        return UberDriver.builder()
-                .driverId(123)
+                .driverId("123")
                 .city("Bangalore")
                 .build();
     }

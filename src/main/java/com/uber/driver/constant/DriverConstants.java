@@ -14,4 +14,5 @@ public class DriverConstants {
     public static final String LICENCE_DOES_NOT_EXIST = "Licence does not exist";
     public static final String VEHICLE_DOES_NOT_EXIST = "Vehicle does not exist";
     public static final String INVALID_TOKEN = "Invalid Token";
+
 }

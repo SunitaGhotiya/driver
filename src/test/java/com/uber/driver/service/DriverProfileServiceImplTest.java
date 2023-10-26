@@ -31,12 +31,12 @@ public class DriverProfileServiceImplTest {
 
     @Test
     public void getDriverProfile() {
-        Mockito.when(driverService.getDriver(Mockito.anyLong())).thenReturn(UberDriver.builder().build());
-        Mockito.when(addressService.getAddress(Mockito.anyLong())).thenReturn(Address.builder().build());
-        Mockito.when(licenceService.getLicence(Mockito.anyLong())).thenReturn(DriverLicence.builder().build());
-        Mockito.when(vehicleService.getVehicle(Mockito.anyLong())).thenReturn(DriverVehicle.builder().build());
+        Mockito.when(driverService.getDriver(Mockito.anyString())).thenReturn(UberDriver.builder().build());
+        Mockito.when(addressService.getAddress(Mockito.anyString())).thenReturn(Address.builder().build());
+        Mockito.when(licenceService.getLicence(Mockito.anyString())).thenReturn(DriverLicence.builder().build());
+        Mockito.when(vehicleService.getVehicle(Mockito.anyString())).thenReturn(DriverVehicle.builder().build());
 
-        DriverProfile driverProfile = driverProfileService.getDriverProfile(123);
+        DriverProfile driverProfile = driverProfileService.getDriverProfile("123");
         Assert.assertNotNull(driverProfile.getUberDriver());
         Assert.assertNotNull(driverProfile.getAddress());
         Assert.assertNotNull(driverProfile.getDriverLicence());

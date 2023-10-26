@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface LicenceRepository extends CrudRepository<DriverLicence, Long> {
+public interface LicenceRepository extends CrudRepository<DriverLicence, String> {
 }

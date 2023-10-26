@@ -1,8 +1,6 @@
 package com.uber.driver.service;
 
 import com.uber.driver.constant.DriverConstants;
-import com.uber.driver.enums.DocumentStatus;
-import com.uber.driver.enums.DriverComplianceStatus;
 import com.uber.driver.exception.AuthenticationException;
 import com.uber.driver.model.UserToken;
 import com.uber.driver.reposiotry.UserTokenRepository;
@@ -78,20 +76,13 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public Boolean validateToken(String token, String phoneNumber) {
+        log.info("Validating toke for phoneNumber : {}", phoneNumber);
+
         UserToken userToken = userTokenRepository.findById(phoneNumber)
                 .orElseThrow(() -> new AuthenticationException(DriverConstants.INVALID_TOKEN));
 
-        log.info("Checking if token is expired, then remove from cache");
-        boolean isTokenExpired = isTokenExpired(token);
-        if(isTokenExpired)
-            userTokenRepository.deleteById(phoneNumber);
+        return token.equals(userToken.getToken()) && !isTokenExpired(token);
 
-        log.info("Checking if token is same as stored in cache for the phoneNumber :{}" +
-                "if the phoneNumber in token is same as stored" +
-                "If the token is not expired : Then valid token !", phoneNumber);
-        return (token.equals(userToken.getToken()) &&
-                userToken.getPhoneNumber().equals(phoneNumber) &&
-                !isTokenExpired);
     }
 
     private Boolean isTokenExpired(String token) {

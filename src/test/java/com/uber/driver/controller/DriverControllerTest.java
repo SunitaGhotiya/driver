@@ -1,6 +1,7 @@
 package com.uber.driver.controller;
 
-import com.uber.driver.constant.DriverConstants;
+import com.uber.driver.enums.BackgroundCheckStatus;
+import com.uber.driver.enums.TrackingDeviceStatus;
 import com.uber.driver.model.UberDriver;
 import com.uber.driver.service.DriverService;
 import org.junit.Assert;
@@ -51,7 +52,7 @@ public class DriverControllerTest {
     @Test
     public void testGetDriver() throws Exception {
         UberDriver driver = getDriver();
-        Mockito.when(driverService.getDriver(Mockito.anyLong())).thenReturn(driver);
+        Mockito.when(driverService.getDriver(Mockito.anyString())).thenReturn(driver);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/driver/{id}", 123))
                 .andExpect(status().is2xxSuccessful())
@@ -78,11 +79,28 @@ public class DriverControllerTest {
     }
 
     @Test
-    public void testUpdateDriverAddress() throws Exception {
+    public void testUpdateDriver() throws Exception {
         UberDriver driver = getDriver();
-        Mockito.when(driverService.updateDriver(Mockito.any(UberDriver.class), Mockito.anyLong())).thenReturn(driver);
+        Mockito.when(driverService.updateDriver(Mockito.any(UberDriver.class), Mockito.anyString())).thenReturn(driver);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .put("/driver/{id}", 123)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(driver)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(driver), mvcResult.getResponse().getContentAsString(), false);
+    }
+
+    @Test
+    public void testUpdateDriverActivationStatus() throws Exception {
+        UberDriver driver = getDriver();
+        Mockito.when(driverService.updateActivationStatus(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(driver);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/updateActivationStatus")
+                .param("driverId", "123")
+                .param("isActive", "true")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(asJsonString(driver)))
@@ -95,17 +113,50 @@ public class DriverControllerTest {
 
 
     @Test
-    public void testUpdateDriverStatus() throws Exception {
+    public void testUpdateBgCheckStatus() throws Exception {
         UberDriver driver = getDriver();
-
-        Mockito.when(driverService.updateActivationStatus(Mockito.anyLong(), Mockito.anyString())).thenReturn(driver);
-
+        Mockito.when(driverService.updateBgCheckStatus(Mockito.anyString(), Mockito.any(BackgroundCheckStatus.class))).thenReturn(driver);
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .patch("/updateActivationStatus")
+                .post("/updateBgCheckStatus")
                 .param("driverId", "123")
-                .param("activationStatus", "Active")
+                .param("backgroundCheckStatus", BackgroundCheckStatus.BG_CHECK_DONE.toString())
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(driver)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(driver), mvcResult.getResponse().getContentAsString(), false);
+    }
+
+    @Test
+    public void testUpdateTrackingDeviceStatus() throws Exception {
+        UberDriver driver = getDriver();
+        Mockito.when(driverService.updateTrackingDeviceStatus(Mockito.anyString(), Mockito.any(TrackingDeviceStatus.class))).thenReturn(driver);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/updateTrackingDeviceStatus")
+                .param("driverId", "123")
+                .param("deviceStatus", TrackingDeviceStatus.DEVICE_ACTIVE.toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(driver)))
+                .andExpect(status().is2xxSuccessful())
+                .andReturn();
+
+        JSONAssert.assertEquals(asJsonString(driver), mvcResult.getResponse().getContentAsString(), false);
+    }
+
+    @Test
+    public void testUpdateOnboardingStatus() throws Exception {
+        UberDriver driver = getDriver();
+        Mockito.when(driverService.updateOnboardingStatus(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(driver);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .post("/updateOnboardingStatus")
+                .param("driverId", "123")
+                .param("isOnboarded", "false")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(asJsonString(driver)))
                 .andExpect(status().is2xxSuccessful())
                 .andReturn();
 

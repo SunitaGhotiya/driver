@@ -1,15 +1,19 @@
 package com.uber.driver.service;
 
-import com.uber.driver.enums.DriverComplianceStatus;
+import com.uber.driver.enums.BackgroundCheckStatus;
+import com.uber.driver.enums.TrackingDeviceStatus;
 import com.uber.driver.model.UberDriver;
 
 public interface DriverService {
-    UberDriver getDriver(long driverId);
+    UberDriver getDriver(String driverId);
     UberDriver getDriverByPhoneNumber(String phoneNumber);
     UberDriver saveDriver(UberDriver uberDriver);
-    UberDriver updateDriver(UberDriver uberDriver, long driverId);
-    void deleteDriver(long driverId);
-    UberDriver updateActivationStatus(long driverId, String activationStatus);
-    void updateComplianceStatus(long driverId, DriverComplianceStatus complianceStatus);
-    boolean checkIfDriverExist(long driverId);
+    UberDriver updateDriver(UberDriver uberDriver, String driverId);
+    void deleteDriver(String driverId);
+    UberDriver updateBgCheckStatus(String driverId, BackgroundCheckStatus backgroundCheckStatus);
+    UberDriver updateTrackingDeviceStatus(String driverId, TrackingDeviceStatus backgroundCheckStatus);
+    UberDriver updateActivationStatus(String driverId, boolean isActive);
+    UberDriver updateOnboardingStatus(String driverId, boolean isOnboarded);
+    UberDriver updateDocVerifiedStatus(String driverId, boolean isDocVerified);
+    boolean checkIfDriverExist(String driverId);
 }
