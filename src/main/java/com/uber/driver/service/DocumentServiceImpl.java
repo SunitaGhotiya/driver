@@ -65,7 +65,10 @@ public class DocumentServiceImpl implements DocumentService{
         Arrays.stream(DocumentType.values())
                 .filter(documentType -> documents.stream().map(DriverDocument::getType)
                         .noneMatch(type -> documentType.toString().equals(type)))
-                .forEach(documentType -> documents.add(new DriverDocument(driverId, documentType)));
+                .forEach(documentType -> {
+                    DriverDocument driverDocument = saveDocument(new DriverDocument(driverId, documentType));
+                    documents.add(driverDocument);
+                });
 
         return documents;
     }
@@ -90,6 +93,10 @@ public class DocumentServiceImpl implements DocumentService{
             else if (documentStatus == DocumentStatus.REJECTED) {
                 log.info("Document Status : {} : update driver onboarding status to {}", DocumentStatus.VERIFIED, DriverComplianceStatus.DOC_REJECTED);
                 driverService.updateComplianceStatus(driverDocument.getDriverId(), DriverComplianceStatus.DOC_REJECTED);
+            }
+            else {
+                log.info("Document Status : {} : update driver onboarding status to {}", documentStatus, DriverComplianceStatus.IN_PROGRESS);
+                driverService.updateComplianceStatus(driverDocument.getDriverId(), DriverComplianceStatus.IN_PROGRESS);
             }
         }
         else

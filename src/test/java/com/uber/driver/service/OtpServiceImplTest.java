@@ -1,5 +1,7 @@
 package com.uber.driver.service;
 
+import com.uber.driver.exception.BadRequestException;
+import com.uber.driver.exception.ResourceNotFoundException;
 import com.uber.driver.model.UserOtpAuthentication;
 import com.uber.driver.reposiotry.UserOtpAuthenticationRepository;
 import org.junit.Assert;
@@ -26,12 +28,23 @@ public class OtpServiceImplTest{
     @Mock
     private UserOtpAuthenticationRepository userOtpAuthenticationRepository;
 
-    private String phoneNumber = "9876543210";
+    private String phoneNumber = "9588975483";
 
     @Test
-    public void generateOTP() {
+    public void generateOTP_validPhoneNumber() {
         Assert.assertNotEquals(0, otpService.generateOTP(phoneNumber));
     }
+
+    @Test(expected = BadRequestException.class)
+    public void generateOTP_invalidPhoneNumberFormat() {
+        Assert.assertNotEquals(0, otpService.generateOTP("abcd"));
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void generateOTP_invalidPhoneNumber() {
+        Assert.assertNotEquals(0, otpService.generateOTP("0101010101"));
+    }
+
 
     @Test
     public void validateOTP_ValidOtp() {

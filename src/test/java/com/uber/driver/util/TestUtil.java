@@ -21,7 +21,6 @@ public class TestUtil {
 
     public static Address getAddress() {
         return Address.builder()
-                .driverId(1)
                 .addressLine1("123")
                 .city("Bangalore")
                 .country("India")

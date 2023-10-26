@@ -40,5 +40,11 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity<>(apiErrorResponse, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler({BadRequestException.class})
+    public ResponseEntity<Object> handleBadRequestException(BadRequestException exception) {
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
+                new Date(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), exception.getMessage());
+        return new ResponseEntity<>(apiErrorResponse, HttpStatus.BAD_REQUEST);
+    }
 
 }

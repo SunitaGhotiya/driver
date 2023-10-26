@@ -20,8 +20,6 @@ import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.anyList;
-import static org.mockito.Mockito.never;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -112,6 +110,8 @@ public class DocumentServiceImplTest {
     @Test
     public void getAllDocumentForNewDriver(){
         when(documentRepository.findAllByDriverId(anyLong())).thenReturn(new ArrayList<>());
+        when(documentRepository.save(any(DriverDocument.class))).thenReturn(driverDocument);
+
         List<DriverDocument> expectedDocumentList = getAllIntitalDocuments(driverDocument.getDriverId());
 
         List<DriverDocument> actualDocumentList = documentService.getAllDocuments(driverDocument.getDriverId());
@@ -153,7 +153,6 @@ public class DocumentServiceImplTest {
 
     @Test
     public void updateDocumentStatusIfDocumentExistWithStatusRejected() {
-        List<DriverDocument> expectedDocumentList = getUserDocuments(driverDocument.getDriverId());
         driverDocument.setStatus(DocumentStatus.REJECTED);
 
         when(documentRepository.findById(anyLong())).thenReturn(Optional.of(driverDocument));
@@ -162,6 +161,18 @@ public class DocumentServiceImplTest {
         verify(driverService).updateComplianceStatus(driverIdCaptor.capture(), driverComplianceStatus.capture());
         Assert.assertEquals(driverDocument.getDriverId(), driverIdCaptor.getValue().longValue());
         Assert.assertEquals(DriverComplianceStatus.DOC_REJECTED, driverComplianceStatus.getValue());
+    }
+
+    @Test
+    public void updateDocumentStatusIfDocumentExistWithStatusPendingOrInReview() {
+        driverDocument.setStatus(DocumentStatus.PENDING);
+
+        when(documentRepository.findById(anyLong())).thenReturn(Optional.of(driverDocument));
+        documentService.updateDocumentStatus(driverDocument.getDriverId(), driverDocument.getStatus());
+
+        verify(driverService).updateComplianceStatus(driverIdCaptor.capture(), driverComplianceStatus.capture());
+        Assert.assertEquals(driverDocument.getDriverId(), driverIdCaptor.getValue().longValue());
+        Assert.assertEquals(DriverComplianceStatus.IN_PROGRESS, driverComplianceStatus.getValue());
     }
 
     @Test(expected = ResourceNotFoundException.class)

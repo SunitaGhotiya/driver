@@ -2,12 +2,9 @@ package com.uber.driver.constant;
 
 public class DriverConstants {
 
-    public static final String OTP_GENERATED_SUCCESS= "OTP Generated Successfully";
-    public static final String OTP_VALID = "Entered Otp is valid";
     public static final String INVALID_OTP = "Entered Otp is NOT valid. Please Retry!";
     public static final String DRIVER_NOT_ONBOARDED = "Driver Not Onboarded!";
-    public static final String DRIVER_DOES_NOT_EXISTS = "Driver Does Not Exists!";
-    public static final String DRIVER_STATUS_UPDATED = "Driver Status Updated!";
+    public static final String INVALID_PHONE_NUMBER = "Not a valid phone number";
 
 
     //exception

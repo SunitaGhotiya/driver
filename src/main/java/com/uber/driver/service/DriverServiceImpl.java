@@ -58,7 +58,8 @@ public class DriverServiceImpl implements DriverService{
         if(Objects.nonNull(uberDriver))
         {
             if(DriverComplianceStatus.ONBOARDED == uberDriver.getComplianceStatus()){
-                log.info("Driver Comliance status : {}, Set Driver ActivationStatus to : {} ", DriverComplianceStatus.ONBOARDED, DocumentStatus.VERIFIED);
+                log.info("Driver Comliance status : {}, Set Driver ActivationStatus to : {} ",
+                        DriverComplianceStatus.ONBOARDED, DocumentStatus.VERIFIED);
                 uberDriver.setActivationStatus(activationStatus);
                 return updateDriver(uberDriver, driverId);
             }
