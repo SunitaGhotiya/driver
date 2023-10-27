@@ -76,6 +76,10 @@ public class DriverServiceImpl implements DriverService{
         if(uberDriver.getBackgroundCheckStatus() == BackgroundCheckStatus.BG_CHECK_DONE){
             if(shouldUpdateDeviceStatus(uberDriver, trackingDeviceStatus)){
                 uberDriver.setTrackingDeviceStatus(trackingDeviceStatus);
+                if(trackingDeviceStatus == TrackingDeviceStatus.DEVICE_ERROR){
+                    uberDriver.setOnboarded(false);
+                    uberDriver.setActive(false);
+                }
                 return driverRepository.save(uberDriver);
             }
             else
@@ -148,10 +152,14 @@ public class DriverServiceImpl implements DriverService{
     }
 
     @Override
-    public UberDriver updateDocVerifiedStatus(String driverId, boolean isDocVerifies) {
+    public UberDriver updateDocVerifiedStatus(String driverId, boolean isDocVerified) {
         UberDriver uberDriver = getDriver(driverId);
-        log.info("Document Verification status updated to : {} ", isDocVerifies);
-        uberDriver.setDocVerified(isDocVerifies);
+        log.info("Document Verification status updated to : {} ", isDocVerified);
+        uberDriver.setDocVerified(isDocVerified);
+        if(!isDocVerified){
+            uberDriver.setOnboarded(false);
+            uberDriver.setActive(false);
+        }
         return driverRepository.save(uberDriver);
     }
 

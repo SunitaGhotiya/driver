@@ -36,8 +36,8 @@ public class GlobalResponseEntityExceptionHandler extends ResponseEntityExceptio
     @ExceptionHandler({AuthenticationException.class})
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException exception) {
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
-                new Date(), HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase(), exception.getMessage());
-        return new ResponseEntity<>(apiErrorResponse, HttpStatus.FORBIDDEN);
+                new Date(), HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase(), exception.getMessage());
+        return new ResponseEntity<>(apiErrorResponse, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler({BadRequestException.class})

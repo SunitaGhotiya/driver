@@ -322,6 +322,18 @@ public class DriverServiceImplTest {
         Assert.assertEquals(TrackingDeviceStatus.DEVICE_ACTIVE, driver.getTrackingDeviceStatus());
     }
 
+    @Test
+    public void updateDeviceStatusActive_DeviceError(){
+        uberDriver.setBackgroundCheckStatus(BackgroundCheckStatus.BG_CHECK_DONE);
+        uberDriver.setTrackingDeviceStatus(TrackingDeviceStatus.DEVICE_ERROR);
+
+        Mockito.when(driverRepository.findById(Mockito.anyString())).thenReturn(Optional.of(uberDriver));
+        Mockito.when(driverRepository.save(Mockito.any(UberDriver.class))).thenReturn(uberDriver);
+
+        UberDriver driver = driverService.updateTrackingDeviceStatus(uberDriver.getDriverId(), TrackingDeviceStatus.DEVICE_ACTIVE);
+        Assert.assertEquals(TrackingDeviceStatus.DEVICE_ACTIVE, driver.getTrackingDeviceStatus());
+    }
+
     @Test(expected = ResourceCannotBeUpdatedException.class)
     public void updateDeviceStatusError_DeviceNotDelivered(){
         uberDriver.setBackgroundCheckStatus(BackgroundCheckStatus.BG_CHECK_DONE);
@@ -340,6 +352,22 @@ public class DriverServiceImplTest {
 
         UberDriver driver = driverService.updateTrackingDeviceStatus(uberDriver.getDriverId(), TrackingDeviceStatus.DEVICE_ERROR);
         Assert.assertEquals(TrackingDeviceStatus.DEVICE_ERROR, driver.getTrackingDeviceStatus());
+        Assert.assertFalse(driver.isOnboarded());
+        Assert.assertFalse(driver.isActive());
+    }
+
+    @Test
+    public void updateDeviceStatusError_DeviceActive(){
+        uberDriver.setBackgroundCheckStatus(BackgroundCheckStatus.BG_CHECK_DONE);
+        uberDriver.setTrackingDeviceStatus(TrackingDeviceStatus.DEVICE_ACTIVE);
+
+        Mockito.when(driverRepository.findById(Mockito.anyString())).thenReturn(Optional.of(uberDriver));
+        Mockito.when(driverRepository.save(Mockito.any(UberDriver.class))).thenReturn(uberDriver);
+
+        UberDriver driver = driverService.updateTrackingDeviceStatus(uberDriver.getDriverId(), TrackingDeviceStatus.DEVICE_ERROR);
+        Assert.assertEquals(TrackingDeviceStatus.DEVICE_ERROR, driver.getTrackingDeviceStatus());
+        Assert.assertFalse(driver.isOnboarded());
+        Assert.assertFalse(driver.isActive());
     }
 
     @Test(expected = ResourceCannotBeUpdatedException.class)
@@ -388,6 +416,17 @@ public class DriverServiceImplTest {
 
         UberDriver driver = driverService.updateDocVerifiedStatus(uberDriver.getDriverId(), true);
         Assert.assertTrue(driver.isDocVerified());
+    }
+
+    @Test
+    public void updateDocVerifiedStatus_false(){
+        Mockito.when(driverRepository.findById(Mockito.anyString())).thenReturn(Optional.of(uberDriver));
+        Mockito.when(driverRepository.save(Mockito.any(UberDriver.class))).thenReturn(uberDriver);
+
+        UberDriver driver = driverService.updateDocVerifiedStatus(uberDriver.getDriverId(), false);
+        Assert.assertFalse(driver.isDocVerified());
+        Assert.assertFalse(driver.isOnboarded());
+        Assert.assertFalse(driver.isActive());
     }
 
     @Test
